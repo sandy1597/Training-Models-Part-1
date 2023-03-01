@@ -78,7 +78,7 @@ cols[0].image("https://scikit-learn.org/stable/_images/sphx_glr_plot_ols_001.png
 cols[1].image("https://scikit-learn.org/stable/_images/sphx_glr_plot_ridge_path_001.png")
 cols[2].image("https://scikit-learn.org/stable/_images/sphx_glr_plot_lasso_lars_ic_001.png")
 cols = st.columns([6 , 2])
-cols[0].markdown('<p class="font_text"> Some Content. Datasets utilized here include diabetes which has 10 input features and 1 target feature, and fake user-defined data. In case of trying breast cancer dataset, we need to select the input feature (which you can do from select box in the sidebar). Now, we can see how that feature is distributed.</p>', unsafe_allow_html=True)
+cols[0].markdown('<p class="font_text"> Datasets utilized here include diabetes which has 10 input features and 1 target feature, and fake user-defined data. In case of trying breast cancer dataset, we need to select the input feature (which you can do from select box in the sidebar). Now, we can see how that feature is distributed.</p>', unsafe_allow_html=True)
 
 ####################################################################################################################################################################
 
@@ -107,7 +107,7 @@ else:
     elif Dataset_Name == 'Fake Exp':
         y=2*np.exp(X_Train)+Noise
     elif Dataset_Name == 'Fake Linear':
-        y=2*X_Train+Noise
+        y=2*X_Train+Noise*np.random.randint(-5,5)
     else:
         y=3.6*X_Train**0.5+Noise
     Data=pd.DataFrame(X_Train,columns=["First"])
