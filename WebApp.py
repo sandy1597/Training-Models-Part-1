@@ -6,6 +6,7 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from sklearn.preprocessing import PolynomialFeatures
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from sklearn import datasets
@@ -81,7 +82,8 @@ cols[0].markdown('<p class="font_text"> Some Content. Datasets utilized here inc
 
 ####################################################################################################################################################################
 
-Dataset_Name = st.sidebar.selectbox('Select your dataset',('Cancer', 'Fake Linear Sin', 'Fake Nonlinear Sin', 'Fake Sinh', 'Fake Exp', 'Fake Linear', 'Fake Nonlinear'),index = 6)
+# Dataset_Name = st.sidebar.selectbox('Select your dataset',('Cancer', 'Fake Linear Sin', 'Fake Nonlinear Sin', 'Fake Sinh', 'Fake Exp', 'Fake Linear', 'Fake Nonlinear'),index = 6)
+Dataset_Name = st.sidebar.selectbox('Select your dataset',('Cancer','Fake Linear'),index = 1)
 
 if Dataset_Name == 'Cancer':
     Data = pd.read_csv("diabetes.txt", sep="	")
@@ -109,6 +111,7 @@ else:
     else:
         y=3.6*X_Train**0.5+Noise
     Data=pd.DataFrame(X_Train,columns=["First"])
+    # Polynomial = st.sidebar.selectbox('Consider using polynomial')
 
 Visualization = st.sidebar.checkbox('Visualize input feature?')
 if Visualization:
@@ -217,16 +220,17 @@ if Elastic_Net:
 #########################################################################################################
 plt.legend(fontsize=15,fancybox=True, framealpha=0.6,bbox_to_anchor=[1, 1])
 
-# Error_Bar_Plot = st.sidebar.checkbox('Visualize Error Bar Plot Based on the metrics?')
-
 cols[1].pyplot(Fig)
 
 ####################################################################################################################################################################
-st.markdown('<p class="font_text"> Now, we want to see how score (or even loss function) varies for each method (linear, ridge, lasso, and elastic-net) based on different metrics.</p>', unsafe_allow_html=True)
+st.markdown('<p class="font_text"> Now, we want to see how score (or even loss function) varies for each method (linear, ridge, lasso, and elastic-net) based on different metrics. Just click on "Visualize Error Bar Plot Based on the metrics?"</p>', unsafe_allow_html=True)
 st.write("[link](https://scikit-learn.org/stable/modules/model_evaluation.html#mean-absolute-error)")
 
-Fig1=alt.Chart(Score_Methods).mark_bar().encode(x=alt.X('Method', axis=alt.Axis(labels=False)),y='Score',color='Method').configure_axis(labelFontSize=20)
-st.altair_chart(Fig1, use_container_width=True)
+Error_Bar_Plot = st.sidebar.checkbox('Visualize Error Bar Plot Based on the metrics?')
+
+if Error_Bar_Plot:
+    Fig1=alt.Chart(Score_Methods).mark_bar().encode(x=alt.X('Method', axis=alt.Axis(labels=False)),y='Score',color='Method').configure_axis(labelFontSize=20)
+    st.altair_chart(Fig1, use_container_width=True)
 
 # Slope_Cont=np.linspace(-10*np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3),10*np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3),50)
 # Slope_Cont=np.linspace(-np.max(y),np.max(y),50)
