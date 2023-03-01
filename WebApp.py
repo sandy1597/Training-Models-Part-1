@@ -77,7 +77,7 @@ cols[0].image("https://scikit-learn.org/stable/_images/sphx_glr_plot_ols_001.png
 cols[1].image("https://scikit-learn.org/stable/_images/sphx_glr_plot_ridge_path_001.png")
 cols[2].image("https://scikit-learn.org/stable/_images/sphx_glr_plot_lasso_lars_ic_001.png")
 cols = st.columns([6 , 2])
-cols[0].markdown('<p class="font_text"> Some Content. Dataset utilized here is diabetes which has 10 input features and 1 target feature. First we select the input feature (which you can do from select box in the sidebar). Now, we can see how that feature is distributed.</p>', unsafe_allow_html=True)
+cols[0].markdown('<p class="font_text"> Some Content. Datasets utilized here include diabetes which has 10 input features and 1 target feature, and fake user-defined data. In case of trying breast cancer dataset, we need to select the input feature (which you can do from select box in the sidebar). Now, we can see how that feature is distributed.</p>', unsafe_allow_html=True)
 
 ####################################################################################################################################################################
 
@@ -92,13 +92,14 @@ if Dataset_Name == 'Cancer':
     Index=Names.index(Feature_Label)
     X_Train = X.iloc[:,Index].to_numpy().reshape(-1,1)   
 else:
+    np.random.seed(0)
     Data_Numbers = st.sidebar.slider('Size of fake data:', 20, 200, value=100)
     X_Train = np.random.randint(0, 100,Data_Numbers).reshape(-1,1)
     Noise = np.random.randint(-5.5, 5.5,Data_Numbers).reshape(-1,1)
     if Dataset_Name == 'Fake Linear Sin':
-        y=5*np.sin(X_Train)+Noise
+        y=5*np.sin(X_Train/10)+0.5*Noise
     elif Dataset_Name == 'Fake Nonlinear Sin':
-        y=X_Train*np.sin(X_Train)+Noise
+        y=X_Train*np.sin(X_Train/10)+0.5*Noise
     elif Dataset_Name == 'Fake Sinh':
         y=np.sinh(X_Train)+Noise
     elif Dataset_Name == 'Fake Exp':
@@ -124,20 +125,20 @@ st.write("[link](https://scikit-learn.org/stable/modules/linear_model.html)")
 cols = st.columns([2 , 6])
 
 
-Slope = st.sidebar.slider('Select a value for the slope',-np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3), np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3), value=0.0)
+Slope = st.sidebar.slider('Select a value for the slope',-np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3)*10, np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3)*10, value=0.0)
 Intercept = st.sidebar.slider('Select a value for the intercept',float(np.min(y)), float(np.max(y)), float((np.min(y)+np.max(y))/2))
 
 
 Columns = st.columns(4,gap='small')
 Lasso = st.sidebar.checkbox('Using Lasso?')
 if Lasso:
-    Alpha_Lasso = cols[0].slider('Select a value for the L1 penalty constant for Lasso regression', 0.0, 100.0, value=50.0)
+    Alpha_Lasso = cols[0].slider('Select a value for the L1 penalty constant for Lasso regression', 0.0, 100000.0, value=50.0)
 Ridge = st.sidebar.checkbox('Using Ridge?')
 if Ridge:
-    Alpha_Ridge = cols[0].slider('Select a value for the L2 penalty constant for Ridge regression', 0.0, 100.0, value=50.0)
+    Alpha_Ridge = cols[0].slider('Select a value for the L2 penalty constant for Ridge regression', 0.0, 100000.0, value=50.0)
 Elastic_Net = st.sidebar.checkbox('Using Elastic Net?')
 if Elastic_Net:
-    Alpha_Elastic_Net = cols[0].slider('Select a value for the constant which multiplies penalty for Elastic Net regression', 0.0, 100.0, value=50.0)
+    Alpha_Elastic_Net = cols[0].slider('Select a value for the constant which multiplies penalty for Elastic Net regression', 0.0, 100000.0, value=50.0)
     L1_Ratio_Elastic_Net = cols[0].slider('Select a value for Elastic Net mixing parameter for penalties', 0.0, 1.0, value=0.5)
 
 Metric = st.sidebar.selectbox('Metric used to calculate loss function: ',('R2','MSE','MAE'), index=0)
@@ -215,6 +216,9 @@ if Elastic_Net:
 
 #########################################################################################################
 plt.legend(fontsize=15,fancybox=True, framealpha=0.6,bbox_to_anchor=[1, 1])
+
+# Error_Bar_Plot = st.sidebar.checkbox('Visualize Error Bar Plot Based on the metrics?')
+
 cols[1].pyplot(Fig)
 
 ####################################################################################################################################################################
@@ -224,13 +228,17 @@ st.write("[link](https://scikit-learn.org/stable/modules/model_evaluation.html#m
 Fig1=alt.Chart(Score_Methods).mark_bar().encode(x=alt.X('Method', axis=alt.Axis(labels=False)),y='Score',color='Method').configure_axis(labelFontSize=20)
 st.altair_chart(Fig1, use_container_width=True)
 
-Slope_Cont=np.linspace(-10*np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3),10*np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3),100)
-Intercep_Cont=np.linspace(np.min(y),np.max(y),100)
+# Slope_Cont=np.linspace(-10*np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3),10*np.round((np.max(y)-np.min(y))/(np.max(X_Train)-np.min(X_Train)),3),50)
+# Slope_Cont=np.linspace(-np.max(y),np.max(y),50)
+# Intercep_Cont=np.linspace(-np.max(y),np.max(y),50)
+Slope_Cont=np.linspace(-4,4,50)
+Intercep_Cont=np.linspace(-4,4,50)
+
 Intercep_Grid, Slope_Grid = np.meshgrid(Intercep_Cont, Slope_Cont)
 
-Contour = st.sidebar.checkbox('Visualize Metric Contour?')
+Contour = st.sidebar.checkbox('Visualize Loss Error Color Map?')
 if Contour:
-    st.markdown('<p class="font_subheader">Metric Contours</p>', unsafe_allow_html=True)
+    st.markdown('<p class="font_subheader">Loss Error Color Map</p>', unsafe_allow_html=True)
     New_Columns = st.columns(3,gap='small')
     Loss_MSE= np.zeros_like(Intercep_Grid)
     Loss_MAE= np.zeros_like(Intercep_Grid)
@@ -265,7 +273,9 @@ if Contour:
     plt.colorbar()
     New_Columns[2].pyplot(Fig1)
 
-if Lasso:
+Contour_Lasso = st.sidebar.checkbox('Visualize Lasso Loss Function?')
+
+if Contour_Lasso:
     st.markdown('<p class="font_subheader">Lasso</p>', unsafe_allow_html=True)
     New_Columns2=st.columns(3,gap='small')
     Lasso_MSE    = np.zeros_like(Intercep_Grid)
@@ -275,7 +285,7 @@ if Lasso:
         for j in range (0,Intercep_Cont.shape[0]):
             Lasso_MSE[i,j]=mean_squared_error(y,Slope_Cont[i]*X_Train+Intercep_Cont[j])/2
             Lasso_Penalty[i,j]=Alpha_Lasso*norm(np.array([Slope_Cont[i],Intercep_Cont[j]]).reshape(-1,1),1)
-    Lasso_Overall=Lasso_MSE+Lasso_MSE
+    Lasso_Overall=Lasso_MSE+Lasso_Penalty
     
     Fig1=plt.figure(figsize=(10,10))
     plt.contourf(Intercep_Cont, Slope_Cont, Lasso_MSE, 1000, cmap='viridis')
@@ -301,7 +311,9 @@ if Lasso:
     plt.colorbar()
     New_Columns2[2].pyplot(Fig1)
     
-if Ridge:
+Contour_Ridge = st.sidebar.checkbox('Visualize Ridge Loss Function?')
+
+if Contour_Ridge:
     st.markdown('<p class="font_subheader">Ridge</p>', unsafe_allow_html=True)
     New_Columns3=st.columns(3,gap='small')
     Ridge_MSE    = np.zeros_like(Intercep_Grid)
@@ -336,8 +348,10 @@ if Ridge:
     plt.title('Ridge Overall Loss',fontsize=24)
     plt.colorbar()
     New_Columns3[2].pyplot(Fig1)
-    
-if Elastic_Net:
+ 
+Contour_Elastic_Net = st.sidebar.checkbox('Visualize ElasticNet Loss Function?')
+ 
+if Contour_Elastic_Net:
     st.markdown('<p class="font_subheader">Elastic Net</p>', unsafe_allow_html=True)
     New_Columns4=st.columns(4,gap='small')
     Elastic_Net_MSE    = np.zeros_like(Intercep_Grid)
