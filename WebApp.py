@@ -149,7 +149,7 @@ Metric = st.sidebar.selectbox('Metric used to calculate loss function: ',('R2','
 Score_Methods = pd.DataFrame(columns = ['Method', 'Score'])
 
 rc('font',**{'family':'serif','serif':['Times']})
-rc('text', usetex=True)
+#rc('text', usetex=True)
 Fig,ax=plt.subplots(figsize=(12,8))
 plt.scatter(X_Train,y,label="Original Data")
 if Dataset_Name == 'Cancer':
