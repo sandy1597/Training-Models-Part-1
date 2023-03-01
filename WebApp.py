@@ -97,7 +97,7 @@ else:
     np.random.seed(0)
     Data_Numbers = st.sidebar.slider('Size of fake data:', 20, 200, value=100)
     X_Train = np.random.randint(0, 100,Data_Numbers).reshape(-1,1)
-    Noise = np.random.randint(-5.5, 5.5,Data_Numbers).reshape(-1,1)
+    Noise = np.random.randint(-10, 10,Data_Numbers).reshape(-1,1)
     if Dataset_Name == 'Fake Linear Sin':
         y=5*np.sin(X_Train/10)+0.5*Noise
     elif Dataset_Name == 'Fake Nonlinear Sin':
@@ -107,7 +107,7 @@ else:
     elif Dataset_Name == 'Fake Exp':
         y=2*np.exp(X_Train)+Noise
     elif Dataset_Name == 'Fake Linear':
-        y=2*X_Train+Noise*np.random.randint(-5,5)
+        y=2*X_Train+Noise
     else:
         y=3.6*X_Train**0.5+Noise
     Data=pd.DataFrame(X_Train,columns=["First"])
